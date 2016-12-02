@@ -1,4 +1,4 @@
-import macros
+import sequtils
 import random, random/urandom, random/mersenne
 
 
@@ -47,10 +47,14 @@ proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
 
 # Not the most accurate way to compute the mean, but still
 proc mean(rng: var RNG, r: RandomVar[float], samples = 10000): float =
-  var total = 0.0
-  for _ in 1 .. samples:
-    total += rng.sample(r)
-  return total / samples.float
+  (1 .. samples).foldl(a  + rng.sample(r), 0.0) / samples.float
+  # var total = 0.0
+  # for _ in 1 .. samples:
+  #   total += rng.sample(r)
+  # return total / samples.float
+
+# For a more specific types we can have overloads:
+proc mean(rng: var RNG, r: Uniform, samples = 10000): float = (r.b - r.a) / 2.0
 
 when isMainModule:
   proc sq(x: float): float = x * x
@@ -79,6 +83,7 @@ when isMainModule:
   echo rng.sample(c)
   echo rng.sample(s)
   echo rng.mean(s)
+  echo rng.mean(u)
   # All this rng is repetitive: another macro would allow
   # to use a common context, like this:
   #
