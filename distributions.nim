@@ -52,6 +52,6 @@ when isMainModule:
   echo(c is RandomVar[int])
   echo(u is RandomVar[float])
   echo(d is RandomVar[int])
-  echo(s is RandomVar[int])
+  echo(s is RandomVar[float])
   echo rng.sample(c)
   echo rng.sample(s)
