@@ -5,6 +5,11 @@ import java.util.Random
 // A generic typeclass for a random var
 trait RandomVar[A] {
   def sample(rng: Random): A
+
+  // The following functions allow to use the `for` notation (see below)
+  def map[B](f: A => B) = ProcVar(rng => f(sample(rng)))
+
+  def flatMap[B](f: A => RandomVar[B]) = ProcVar(rng => f(sample(rng)).sample(rng))
 }
 
 object RandomVar {
@@ -89,4 +94,12 @@ object Distributions extends App {
   println(rng.sample(sum(c, d)))
 
   println(mean(rng, u))
+
+  // We can use the `for` notation
+  val total = for {
+    a <- u
+    b <- d
+  } yield a + b
+
+  println(mean(rng, total))
 }
