@@ -33,17 +33,12 @@ proc choose[A](xs: seq[A]): Discrete[A] =
   new result.values
   result.values[] = xs
 
-# proc sq(x: int): int = x * x
-
 proc sq(x: float): float = x * x
 
 proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
   new result.source
   result.source[] = b
   result.transform = f
-
-# template lift1(f, b: typed): auto =
-#   ProcVar(source = b, transform = f)
 
 when isMainModule:
   let
