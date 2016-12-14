@@ -57,20 +57,26 @@ proc mean(rng: var RNG, r: RandomVar[float], samples = 10000): float =
 proc mean(rng: var RNG, r: Uniform, samples = 10000): float = (r.b - r.a) / 2.0
 
 when isMainModule:
+  import typetraits
+
   proc sq(x: float): float = x * x
+
+  # I would like to be able to auto-generate
+  # this with a macro
+  template sq(x: RandomVar[float]): auto =
+    lift1(sq, x)
+
   let
     c = constant(3)
     u = uniform(2, 18)
     d = choose(@[1, 2, 3])
-    s = lift1(sq, u)
+    s = sq(u)
 
-    # This is not ideal yet
-    # I would like to write
-    # s = sq(u)
-    # or (with a different meaning, two different samples)
-    # s = u * u
-    # This will require a little macro trickery to define overloads
-    # for `sq`, `*` and so on
+  # I would also like to write
+  # (with a different meaning, two different samples)
+  # s = u * u
+  # This will require a little macro trickery to define overloads
+  # for `sq`, `*` and so on
 
   var rng = initMersenneTwister(urandom(16))
 
