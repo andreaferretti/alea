@@ -19,6 +19,9 @@ object RandomVar {
   // r.sample(rng)
   implicit class MyRandom(val rng: Random) {
     def sample[A](r: RandomVar[A]) = r.sample(rng)
+
+    def mean(r: RandomVar[Double], samples: Int = 10000) =
+      RandomVar.mean(rng, r, samples)
   }
 
   // How to lift a function on values to a function on random variables
@@ -93,7 +96,7 @@ object Distributions extends App {
   println(rng.sample(s(u)))
   println(rng.sample(sum(c, d)))
 
-  println(mean(rng, u))
+  println(rng.mean(u))
 
   // We can use the `for` notation
   val total = for {
@@ -101,5 +104,5 @@ object Distributions extends App {
     b <- d
   } yield a + b
 
-  println(mean(rng, total))
+  println(rng.mean(total))
 }
