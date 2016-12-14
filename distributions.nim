@@ -43,6 +43,16 @@ proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
   result.source[] = b
   result.transform = f
 
+# proc lift2[A; B; C; D](f: proc(a: A, b: B): D, c: C): ProcVar[(A, B), C, D] =
+#   new result.source
+#   result.source[] = c
+#   result.transform = f
+#
+# proc `&`[A, B](x: RandomVar[A], y: RandomVar[B]): ProcVar[(A, B)] =
+#   new result.source
+#   result.source[] = b
+#   result.transform = f
+
 # Other utilities, e.g. the mean:
 
 # Not the most accurate way to compute the mean, but still
@@ -65,6 +75,9 @@ when isMainModule:
   # this with a macro
   template sq(x: RandomVar[float]): auto =
     lift1(sq, x)
+
+  # template `*`(x, y: RandomVar[float]): auto =
+  #   lift2(`*`, x & y)
 
   let
     c = constant(3)
