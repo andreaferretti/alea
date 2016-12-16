@@ -48,11 +48,20 @@ proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
   result.source[] = b
   result.transform = f
 
-proc map[A, B](x: Discrete[A], f: proc(a: A): B): ClosureVar[B] =
+template mapper(f: typed, B: typedesc): auto =
   proc inner(rng: var MyRNG): B =
     f(rng.sample(x))
 
   result.f = inner
+
+proc map[A, B](x: ConstantVar[A], f: proc(a: A): B): ConstantVar[B] =
+  result.value = f(x.value)
+
+proc map[A, B](x: Discrete[A], f: proc(a: A): B): ClosureVar[B] =
+  mapper(f, B)
+
+proc map[A, B](x: ClosureVar[A], f: proc(a: A): B): ClosureVar[B] =
+  mapper(f, B)
 
 # proc lift2[A; B; C; D](f: proc(a: A, b: B): D, c: C): ProcVar[(A, B), C, D] =
 #   new result.source
@@ -95,7 +104,8 @@ when isMainModule:
     u = uniform(2, 18)
     d = choose(@[1, 2, 3])
     s = sq(u)
-    t = d.map(x => x * x)
+    t = d.map((x: int) => x * x)
+    z = t.map((x: int) => x * x)
 
   # I would also like to write
   # (with a different meaning, two different samples)
@@ -110,11 +120,13 @@ when isMainModule:
   echo(u is RandomVar[float])
   echo(d is RandomVar[int])
   echo(s is RandomVar[float])
-  echo(t is RandomVar[float])
+  echo(t is RandomVar[int])
+  echo(t is RandomVar)
   # Sampling
   echo rng.sample(c)
   echo rng.sample(s)
   echo rng.sample(t)
+  echo rng.sample(z)
   echo rng.mean(s)
   echo rng.mean(u)
   # All this rng is repetitive: another macro would allow
