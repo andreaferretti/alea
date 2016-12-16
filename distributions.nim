@@ -24,9 +24,8 @@ type
 # in a type with dynamic dispatch
 # and add a few utility methods
 proc wrap[R: RNG](rng: R): Random =
-  proc inner(): float =
-    var r = rng
-    return r.random()
+  var r = rng
+  proc inner(): float = r.random()
 
   result.random = inner
 
@@ -83,6 +82,16 @@ macro lift[A, B](f: proc(a: A): B): auto =
 
   result = getAst(inner(id))
 
+# Lifting functions of two variables
+
+# macro lift[A, B, C](f: proc(a: A, b: B): C): auto =
+#   let id = !($(f))
+#   template inner(name: expr): auto {.inject.} =
+#     template name(x: RandomVar): auto =
+#       map(x, name)
+#
+#   result = getAst(inner(id))
+
 # Other utilities, e.g. the mean:
 
 # Not the most accurate way to compute the mean, but still
@@ -103,8 +112,11 @@ when isMainModule:
   # template sq(x: RandomVar[float]): auto =
   #   map(x, sq)
 
-  # template `*`(x, y: RandomVar[float]): auto =
-  #   lift2(`*`, x & y)
+  template `*`(x, y: RandomVar[int]): auto =
+    (x && y).map(proc(t: (int, int)): auto =
+      let (a, b) = t
+      a * b
+    )
 
   let
     c = constant(3)
@@ -113,6 +125,7 @@ when isMainModule:
     t = d.map((x: int) => x * x)
     z = u.map((x: float) => x * x)
     s = sq(z)
+    g = d * d
     w = t && d
 
   # I would also like to write
@@ -121,7 +134,8 @@ when isMainModule:
   # This will require a little macro trickery to define overloads
   # for `sq`, `*` and so on
 
-  var rng = wrap(initMersenneTwister(urandom(16)))
+  var mers = initMersenneTwister(urandom(16))
+  var rng = wrap(mers)
 
   # Check that they are all random variables
   echo(c is RandomVar[int])
@@ -136,6 +150,7 @@ when isMainModule:
   echo rng.sample(t)
   echo rng.sample(z)
   echo rng.sample(w)
+  echo rng.sample(g)
   echo rng.mean(s)
   echo rng.mean(u)
   # All this rng is repetitive: another macro would allow
