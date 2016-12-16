@@ -48,19 +48,24 @@ proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
   result.source[] = b
   result.transform = f
 
+# proc infer[A](x: ConstantVar[A]): typedesc = A
+#
+# proc infer[A](x: Discrete[A]): typedesc = A
+#
+# proc infer[A](x: ClosureVar[A]): typedesc = A
+#
+# proc infer[A](x: Uniform): typedesc = float
+
+# Alternatively, we can use a closure to represent the result.
+# This has the advantage that the type parameters are simpler (just the
+# type of the produced values unlike ProcVar[A, B, C]), but for now we
+# can only do that defining `map` case by case (although we can abstract
+# the body in a template)
 template mapper(f: typed, B: typedesc): auto =
   proc inner(rng: var MyRNG): B =
     f(rng.sample(x))
 
   result.f = inner
-
-proc infer[A](x: ConstantVar[A]): typedesc = A
-
-proc infer[A](x: Discrete[A]): typedesc = A
-
-proc infer[A](x: ClosureVar[A]): typedesc = A
-
-proc infer[A](x: Uniform): typedesc = float
 
 proc map[A, B](x: ConstantVar[A], f: proc(a: A): B): ConstantVar[B] =
   result.value = f(x.value)
@@ -74,11 +79,9 @@ proc map[A, B](x: ClosureVar[A], f: proc(a: A): B): ClosureVar[B] =
 proc map[B](x: Uniform, f: proc(a: float): B): ClosureVar[B] =
   mapper(f, B)
 
-# proc lift2[A; B; C; D](f: proc(a: A, b: B): D, c: C): ProcVar[(A, B), C, D] =
-#   new result.source
-#   result.source[] = c
-#   result.transform = f
-
+# We can try to extend `map` to more than one source distribution by using
+# tuples of distributions. Unfortunately, here we run in the same problem
+# and need to define one function per pair... :-/
 proc `&`[A](x: Discrete[A], y: Uniform): ClosureVar[(A, float)] =
   proc inner(rng: var MyRNG): auto =
     (rng.sample(x), rng.sample(y))
@@ -90,10 +93,6 @@ proc `&`[A](x: Discrete[A], y: Uniform): ClosureVar[(A, float)] =
 # Not the most accurate way to compute the mean, but still
 proc mean(rng: var RNG, r: RandomVar[float], samples = 10000): float =
   (1 .. samples).foldl(a  + rng.sample(r), 0.0) / samples.float
-  # var total = 0.0
-  # for _ in 1 .. samples:
-  #   total += rng.sample(r)
-  # return total / samples.float
 
 # For a more specific types we can have overloads:
 proc mean(rng: var RNG, r: Uniform, samples = 10000): float = (r.b - r.a) / 2.0
