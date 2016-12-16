@@ -54,6 +54,14 @@ template mapper(f: typed, B: typedesc): auto =
 
   result.f = inner
 
+proc infer[A](x: ConstantVar[A]): typedesc = A
+
+proc infer[A](x: Discrete[A]): typedesc = A
+
+proc infer[A](x: ClosureVar[A]): typedesc = A
+
+proc infer[A](x: Uniform): typedesc = float
+
 proc map[A, B](x: ConstantVar[A], f: proc(a: A): B): ConstantVar[B] =
   result.value = f(x.value)
 
@@ -63,15 +71,19 @@ proc map[A, B](x: Discrete[A], f: proc(a: A): B): ClosureVar[B] =
 proc map[A, B](x: ClosureVar[A], f: proc(a: A): B): ClosureVar[B] =
   mapper(f, B)
 
+proc map[B](x: Uniform, f: proc(a: float): B): ClosureVar[B] =
+  mapper(f, B)
+
 # proc lift2[A; B; C; D](f: proc(a: A, b: B): D, c: C): ProcVar[(A, B), C, D] =
 #   new result.source
 #   result.source[] = c
 #   result.transform = f
-#
-# proc `&`[A, B](x: RandomVar[A], y: RandomVar[B]): ProcVar[(A, B)] =
-#   new result.source
-#   result.source[] = b
-#   result.transform = f
+
+proc `&`[A](x: Discrete[A], y: Uniform): ClosureVar[(A, float)] =
+  proc inner(rng: var MyRNG): auto =
+    (rng.sample(x), rng.sample(y))
+
+  result.f = inner
 
 # Other utilities, e.g. the mean:
 
@@ -106,6 +118,7 @@ when isMainModule:
     s = sq(u)
     t = d.map((x: int) => x * x)
     z = t.map((x: int) => x * x)
+    w = d & u
 
   # I would also like to write
   # (with a different meaning, two different samples)
@@ -127,6 +140,7 @@ when isMainModule:
   echo rng.sample(s)
   echo rng.sample(t)
   echo rng.sample(z)
+  echo rng.sample(w)
   echo rng.mean(s)
   echo rng.mean(u)
   # All this rng is repetitive: another macro would allow
