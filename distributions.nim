@@ -107,6 +107,8 @@ proc discretize(rng: var Random, r: RandomVar, samples = 10000): auto =
   return choose(values)
 
 when isMainModule:
+  import future
+
   proc sq(x: float): float = x * x
 
   lift(sq)
