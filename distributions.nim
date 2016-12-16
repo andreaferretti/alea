@@ -17,9 +17,6 @@ type
     a, b: float
   Discrete[A] = object
     values: ref seq[A]
-  ProcVar[A; B; C] = object
-    source: ref B
-    transform: proc(a: A): C
   ClosureVar[A] = object
     f: proc(rng: var Random): A
 
@@ -41,9 +38,6 @@ proc randomInt(rng: var Random, cap: int): int =
 # How to sample from various concrete instances
 proc sample[A](rng: var Random, c: ConstantVar[A]): A = c.value
 
-proc sample[A; B; C](rng: var Random, p: ProcVar[A, B, C]): C =
-  p.transform(sample(rng, p.source[]))
-
 proc sample(rng: var Random, u: Uniform): float = u.a + (u.b - u.a) * rng.random()
 
 proc sample[A](rng: var Random, d: Discrete[A]): A =
@@ -60,22 +54,10 @@ proc choose[A](xs: seq[A]): Discrete[A] =
   new result.values
   result.values[] = xs
 
+proc closure[A](f: proc(a: var Random): A): ClosureVar[A] =
+  result.f = f
+
 # How to lift a function on values to a function on random variables
-proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
-  new result.source
-  result.source[] = b
-  result.transform = f
-
-# proc infer[A](x: ConstantVar[A]): typedesc = A
-#
-# proc infer[A](x: Discrete[A]): typedesc = A
-#
-# proc infer[A](x: ClosureVar[A]): typedesc = A
-#
-# proc infer[A](x: Uniform): typedesc = float
-
-# Alternatively, we can use a closure to represent the result.
-# This has the advantage that the type parameters are simpler
 proc map[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
   proc inner(rng: var Random): B =
     f(rng.sample(x))
@@ -83,13 +65,13 @@ proc map[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
   result.f = inner
 
 # We can try to extend `map` to more than one source distribution by using
-# tuples of distributions. Unfortunately, here we run in the same problem
-# and need to define one function per pair... :-/
-proc `&`[A](x: Uniform, y: ClosureVar[A]): ClosureVar[(float, A)] =
+# tuples of distributions. Unfortunately, here we get an error if we do not
+# leave A and B fully generic
+proc `&&`[A, B](x: A, y: B): auto =
   proc inner(rng: var Random): auto =
     (rng.sample(x), rng.sample(y))
 
-  result.f = inner
+  return closure(inner)
 
 # Other utilities, e.g. the mean:
 
@@ -108,7 +90,7 @@ when isMainModule:
   # I would like to be able to auto-generate
   # this with a macro
   template sq(x: RandomVar[float]): auto =
-    lift1(sq, x)
+    map(x, sq)
 
   # template `*`(x, y: RandomVar[float]): auto =
   #   lift2(`*`, x & y)
@@ -120,7 +102,7 @@ when isMainModule:
     s = sq(u)
     t = d.map((x: int) => x * x)
     z = u.map((x: float) => x * x)
-    w = u & z
+    w = t && d
 
   # I would also like to write
   # (with a different meaning, two different samples)
