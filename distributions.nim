@@ -75,27 +75,12 @@ proc lift1[A; B; C](f: proc(a: A): C, b: B): ProcVar[A, B, C] =
 # proc infer[A](x: Uniform): typedesc = float
 
 # Alternatively, we can use a closure to represent the result.
-# This has the advantage that the type parameters are simpler (just the
-# type of the produced values unlike ProcVar[A, B, C]), but for now we
-# can only do that defining `map` case by case (although we can abstract
-# the body in a template)
-template mapper(f: typed, B: typedesc): auto =
+# This has the advantage that the type parameters are simpler
+proc map[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
   proc inner(rng: var Random): B =
     f(rng.sample(x))
 
   result.f = inner
-
-proc map[A, B](x: ConstantVar[A], f: proc(a: A): B): ConstantVar[B] =
-  result.value = f(x.value)
-
-proc map[A, B](x: Discrete[A], f: proc(a: A): B): ClosureVar[B] =
-  mapper(f, B)
-
-proc map[A, B](x: ClosureVar[A], f: proc(a: A): B): ClosureVar[B] =
-  mapper(f, B)
-
-proc map[B](x: Uniform, f: proc(a: float): B): ClosureVar[B] =
-  mapper(f, B)
 
 # We can try to extend `map` to more than one source distribution by using
 # tuples of distributions. Unfortunately, here we run in the same problem
