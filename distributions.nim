@@ -109,6 +109,9 @@ proc discretize(rng: var Random, r: RandomVar, samples = 10000): auto =
 when isMainModule:
   import future
 
+  # We initialize the random number generator
+  var rng = wrap(initMersenneTwister(urandom(16)))
+
   proc sq(x: float): float = x * x
 
   lift(sq)
@@ -122,6 +125,8 @@ when isMainModule:
   proc `*`(x, y: RandomVar[int]): auto =
     map2(x, y, (a: int, b: int) =>  a * b)
 
+  # We define a few distributions, both with the default
+  # constructors and using the operations above
   let
     c = constant(3)
     u = uniform(2, 18)
@@ -131,17 +136,7 @@ when isMainModule:
     s = sq(z)
     g = d * d
     w = t && d
-
-  # I would also like to write
-  # (with a different meaning, two different samples)
-  # s = u * u
-  # This will require a little macro trickery to define overloads
-  # for `sq`, `*` and so on
-
-  var mers = initMersenneTwister(urandom(16))
-  var rng = wrap(mers)
-
-  let u1 = rng.discretize(u)
+    u1 = rng.discretize(u)
 
   # Check that they are all random variables
   echo(c is RandomVar[int])
