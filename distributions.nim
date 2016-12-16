@@ -23,6 +23,21 @@ type
   ClosureVar[A] = object
     f: proc(rng: var Random): A
 
+# Here we wrap the RNG typeclass
+# in a type with dynamic dispatch
+# and add a few utility methods
+proc wrap[R: RNG](rng: R): Random =
+  proc inner(): float =
+    var r = rng
+    return r.random()
+
+  result.random = inner
+
+proc randomInt(rng: var Random, cap: int): int =
+  result = cap
+  while result == cap:
+    result = (rng.random() * cap.float).int
+
 # How to sample from various concrete instances
 proc sample[A](rng: var Random, c: ConstantVar[A]): A = c.value
 
@@ -31,17 +46,10 @@ proc sample[A; B; C](rng: var Random, p: ProcVar[A, B, C]): C =
 
 proc sample(rng: var Random, u: Uniform): float = u.a + (u.b - u.a) * rng.random()
 
-# proc sample[A](rng: var RNG, d: Discrete[A]): A = rng.randomChoice(d.values[])
+proc sample[A](rng: var Random, d: Discrete[A]): A =
+  d.values[rng.randomInt(d.values[].len)]
 
 proc sample[A](rng: var Random, c: ClosureVar[A]): A = c.f(rng)
-
-# Here we wrap the RNG typeclass
-proc wrap[R: RNG](rng: R): Random =
-  proc inner(): float =
-    var r = rng
-    return r.random()
-
-  result.random = inner
 
 # A few constructors
 converter constant[A](a: A): ConstantVar[A] = ConstantVar[A](value: a)
@@ -123,9 +131,9 @@ when isMainModule:
   let
     c = constant(3)
     u = uniform(2, 18)
-    # d = choose(@[1, 2, 3])
+    d = choose(@[1, 2, 3])
     s = sq(u)
-    # t = d.map((x: int) => x * x)
+    t = d.map((x: int) => x * x)
     z = u.map((x: float) => x * x)
     w = u & z
 
@@ -140,14 +148,14 @@ when isMainModule:
   # Check that they are all random variables
   echo(c is RandomVar[int])
   echo(u is RandomVar[float])
-  # echo(d is RandomVar[int])
+  echo(d is RandomVar[int])
   echo(s is RandomVar[float])
-  # echo(t is RandomVar[int])
-  # echo(t is RandomVar)
+  echo(t is RandomVar[int])
+  echo(t is RandomVar)
   # Sampling
   echo rng.sample(c)
   echo rng.sample(s)
-  # echo rng.sample(t)
+  echo rng.sample(t)
   echo rng.sample(z)
   echo rng.sample(w)
   echo rng.mean(s)
