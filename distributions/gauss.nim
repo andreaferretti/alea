@@ -7,6 +7,8 @@ type Gaussian* = object
 proc gaussian*(mu, sigma: float): Gaussian =
   Gaussian(mu: mu, sigma: sigma)
 
+# To make Gaussian an instance of RandomVar[float],
+# just define `sample`
 proc sample*(rng: var Random, g: Gaussian): float =
   var
     s = 0.0
@@ -19,4 +21,6 @@ proc sample*(rng: var Random, g: Gaussian): float =
   let x = u * sqrt(-2.0 * ln(s) / s)
   return g.mu + (g.sigma * x)
 
+# One can also specialize other stats, such as the mean,
+# when they are known in advance
 proc mean*(rng: var Random, g: Gaussian, samples = 100000): float = g.mu
