@@ -1,4 +1,4 @@
-import sequtils
+import sequtils, future
 import ./core
 
 # How to lift a function on values to a function on random variables
@@ -27,11 +27,11 @@ proc `&&`*[A, B](x: A, y: B): auto =
 # Other utilities, e.g. the mean:
 
 # Not the most accurate way to compute the mean, but still
-proc mean*(rng: var Random, r: RandomVar[float], samples = 10000): float =
+proc mean*(rng: var Random, r: RandomVar[float], samples = 100000): float =
   (1 .. samples).foldl(a  + rng.sample(r), 0.0) / samples.float
 
 # For a more specific types we can have overloads:
-proc mean*(rng: var Random, r: Uniform, samples = 10000): float = (r.b + r.a) / 2.0
+proc mean*(rng: var Random, r: Uniform, samples = 100000): float = (r.b + r.a) / 2.0
 
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
@@ -40,3 +40,9 @@ proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
   for _ in 1 .. samples:
     values.add(rng.sample(r))
   return choose(values)
+
+proc `*`*(x, y: RandomVar[int]): auto =
+  map2(x, y, (a: int, b: int) =>  a * b)
+
+proc `*`*(x, y: RandomVar[float]): auto =
+  map2(x, y, (a: float, b: float) =>  a * b)
