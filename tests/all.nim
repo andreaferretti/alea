@@ -10,7 +10,7 @@ suite "test distributions":
   # We initialize the random number generator
   var rng = wrap(initMersenneTwister(urandom(16)))
 
-  test "creating ranvom var instances":
+  test "creating RandomVar instances":
     let
       c = constant(3)
       u = uniform(2, 18)
@@ -65,6 +65,15 @@ suite "test distributions":
       s = u * u
 
     check(rng.mean(s) ~ 16)
+
+  test "gaussian random variables":
+    let
+      g = gaussian(3, 5)
+      h = g - g
+
+    check(g is RandomVar[float] == true)
+    check(rng.mean(g) == 3)
+    check(rng.mean(h) ~ 0)
 
   test "pairs of random variables":
     let

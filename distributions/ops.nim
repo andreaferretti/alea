@@ -46,3 +46,6 @@ proc `*`*(x, y: RandomVar[int]): auto =
 
 proc `*`*(x, y: RandomVar[float]): auto =
   map2(x, y, (a: float, b: float) =>  a * b)
+
+proc `-`*(x, y: RandomVar[float]): auto =
+  map2(x, y, (a: float, b: float) =>  a - b)
