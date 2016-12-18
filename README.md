@@ -8,4 +8,4 @@ Install `sbt`, then `sbt run`
 
 ## Nim
 
-Install `nim` (e.g. with brew), then `nimble c -r distributions.nim`
+Install `nim` (e.g. with brew), then `nimble test`
