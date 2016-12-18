@@ -1,4 +1,5 @@
 nimcache
 target
 project/project
-/distributions
+tests/all
+*.ndb
