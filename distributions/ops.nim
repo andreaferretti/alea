@@ -8,6 +8,13 @@ proc map*[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
 
   result.f = inner
 
+# # Useful for monadic composition
+# proc flatMap*[A, B](x: RandomVar[A], f: proc(a: A): RandomVar[B]): ClosureVar[B] =
+#   proc inner(rng: var Random): B =
+#     rng.sample(f(rng.sample(x)))
+#
+#   result.f = inner
+
 # How to lift a function on two values to a function on random variables
 proc map2*[A, B, C](x, y: RandomVar, f: proc(a: A, b: B): C): ClosureVar[C] =
   proc inner(rng: var Random): B =
