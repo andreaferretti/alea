@@ -41,11 +41,23 @@ proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
     values.add(rng.sample(r))
   return choose(values)
 
+proc `+`*(x, y: RandomVar[int]): auto =
+  map2(x, y, (a: int, b: int) =>  a + b)
+
+proc `+`*(x, y: RandomVar[float]): auto =
+  map2(x, y, (a: float, b: float) =>  a + b)
+
+proc `-`*(x, y: RandomVar[int]): auto =
+  map2(x, y, (a: int, b: int) =>  a - b)
+
+proc `-`*(x, y: RandomVar[float]): auto =
+  map2(x, y, (a: float, b: float) =>  a - b)
+
 proc `*`*(x, y: RandomVar[int]): auto =
   map2(x, y, (a: int, b: int) =>  a * b)
 
 proc `*`*(x, y: RandomVar[float]): auto =
   map2(x, y, (a: float, b: float) =>  a * b)
 
-proc `-`*(x, y: RandomVar[float]): auto =
-  map2(x, y, (a: float, b: float) =>  a - b)
+proc `/`*(x, y: RandomVar[float]): auto =
+  map2(x, y, (a: float, b: float) =>  a / b)
