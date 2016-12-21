@@ -83,7 +83,7 @@ suite "test distributions":
 
     check(@[(5, 1), (5, 2), (5, 3)].contains(rng.sample(s)))
 
-  test "lifting functions random variables":
+  test "lifting functions to random variables":
     proc sq(x: int): int = x * x
 
     lift(sq)
@@ -92,3 +92,10 @@ suite "test distributions":
       s = sq(d)
 
     check(@[1, 4, 9].contains(rng.sample(s)))
+
+  test "lifts of math operations":
+    let
+      u = uniform(0, 9)
+      s = sqrt(u)
+
+    check(rng.sample(s).isBetween(0, 3))
