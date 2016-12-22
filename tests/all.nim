@@ -1,4 +1,4 @@
-import future, unittest
+import future, unittest, math
 import random, random/urandom, random/mersenne
 import distributions
 
@@ -54,6 +54,19 @@ suite "test distributions":
     check(rng.mean(u) == 4.0)
     check(rng.mean(t) ~ 2.0)
 
+  test "computing the variance and standard deviation":
+    let
+      c = constant(3.5)
+      u = uniform(2, 8)
+      t = choose(@[1, 2, 3]).map((x: int) => x.float)
+
+    check(rng.variance(c) == 0.0)
+    check(rng.variance(u) == 3.0)
+    check(rng.variance(t) ~ 2.0 / 3.0)
+    check(rng.stddev(c) == 0.0)
+    check(rng.stddev(u) == sqrt(3.0))
+    check(rng.stddev(t) ~ sqrt(2.0 / 3.0))
+
   test "discretizing random variables":
     let
       u = uniform(2, 5)
@@ -75,6 +88,7 @@ suite "test distributions":
 
     check(g is RandomVar[float] == true)
     check(rng.mean(g) == 3)
+    check(rng.stddev(g) == 5)
     check(rng.mean(h) ~ 0)
 
   test "pairs of random variables":

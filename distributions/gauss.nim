@@ -24,3 +24,8 @@ proc sample*(rng: var Random, g: Gaussian): float =
 # One can also specialize other stats, such as the mean,
 # when they are known in advance
 proc mean*(rng: var Random, g: Gaussian, samples = 100000): float = g.mu
+
+proc variance*(rng: var Random, g: Gaussian, samples = 100000): float =
+  g.sigma * g.sigma
+
+proc stddev*(rng: var Random, g: Gaussian, samples = 100000): float = g.sigma

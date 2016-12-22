@@ -1,4 +1,4 @@
-import sequtils, future
+import sequtils, future, math
 import ./core
 
 # How to lift a function on values to a function on random variables
@@ -34,13 +34,29 @@ proc `&&`*[A, B](x: A, y: B): auto =
 # Other utilities, e.g. the mean:
 
 # Not the most accurate way to compute the mean, but still
-proc mean*(rng: var Random, r: RandomVar[float], samples = 100000): float =
-  (1 .. samples).foldl(a  + rng.sample(r), 0.0) / samples.float
+proc mean*(rng: var Random, r: RandomVar[float], samples = 100000): float {.inline.} =
+  (1 .. samples).foldl(a + rng.sample(r), 0.0) / samples.float
 
 # For a more specific types we can have overloads:
-proc mean*(rng: var Random, r: Uniform, samples = 100000): float = (r.b + r.a) / 2.0
+proc mean*(rng: var Random, r: Uniform, samples = 100000): float {.inline.} =
+  (r.b + r.a) / 2.0
 
-proc mean*(rng: var Random, r: ConstantVar[float], samples = 100000): float = r.value
+proc mean*(rng: var Random, r: ConstantVar[float], samples = 100000): float {.inline.} =
+  r.value
+
+proc sq(x: float): float {.inline.} = x * x
+
+proc variance*(rng: var Random, r: RandomVar[float], samples = 100000): float =
+  let m = mean(rng, r, samples)
+  (1 .. samples).foldl(a + sq(rng.sample(r) - m), 0.0) / samples.float
+
+proc variance*(rng: var Random, r: Uniform, samples = 100000): float =
+  sq(r.b - r.a) / 12.0
+
+proc variance*(rng: var Random, r: ConstantVar[float], samples = 100000): float = 0.0
+
+proc stddev*(rng: var Random, r: RandomVar[float], samples = 100000): float =
+  sqrt(variance(rng, r, samples))
 
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
