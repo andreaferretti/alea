@@ -60,13 +60,16 @@ suite "test distributions":
     let
       c = constant(3.5)
       u = uniform(2, 8)
+      d = choose(@[2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
       t = choose(@[1, 2, 3]).map((x: int) => x.float)
 
     check(rng.variance(c) == 0.0)
     check(rng.variance(u) == 3.0)
+    check(rng.variance(d) == 4.0)
     check(rng.variance(t) ~ 2.0 / 3.0)
     check(rng.stddev(c) == 0.0)
     check(rng.stddev(u) == sqrt(3.0))
+    check(rng.stddev(d) == 2.0)
     check(rng.stddev(t) ~ sqrt(2.0 / 3.0))
 
   test "discretizing random variables":

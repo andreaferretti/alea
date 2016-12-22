@@ -61,6 +61,13 @@ proc variance*(rng: var Random, r: Uniform, samples = 100000): float =
 
 proc variance*(rng: var Random, r: ConstantVar[float], samples = 100000): float = 0.0
 
+proc variance*(rng: var Random, r: Discrete[float], samples = 100000): float {.inline.} =
+  let m = mean(rng, r, samples)
+  if r.values[].len < samples:
+    r.values[].foldl(a + sq(b - m), 0.0) / r.values[].len.float
+  else:
+    (1 .. samples).foldl(a + rng.sample(r), 0.0) / samples.float
+
 proc stddev*(rng: var Random, r: RandomVar[float], samples = 100000): float =
   sqrt(variance(rng, r, samples))
 
