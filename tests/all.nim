@@ -176,6 +176,7 @@ suite "test distributions":
     let
       a = uniform(0, 9)
       b = choose([1, 2, 3, 4, 5]).map((x: int) => x.float)
-      s = ln(abs((sqrt(a) * b) - (a.floor / log10(b))))
+      p = poisson(13)
+      s = ln(abs((sqrt(a) * b) - (a.floor / log10(p))))
 
     discard rng.sample(s)
