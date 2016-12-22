@@ -1,5 +1,5 @@
 import sequtils, future, math
-import ./core
+import ./core, ./rng
 
 # How to lift a function on values to a function on random variables
 proc map*[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
@@ -43,6 +43,12 @@ proc mean*(rng: var Random, r: Uniform, samples = 100000): float {.inline.} =
 
 proc mean*(rng: var Random, r: ConstantVar[float], samples = 100000): float {.inline.} =
   r.value
+
+proc mean*(rng: var Random, r: Discrete[float], samples = 100000): float {.inline.} =
+  if r.values[].len < samples:
+    r.values[].foldl(a + b, 0.0) / r.values[].len.float
+  else:
+    (1 .. samples).foldl(a + rng.sample(r), 0.0) / samples.float
 
 proc sq(x: float): float {.inline.} = x * x
 

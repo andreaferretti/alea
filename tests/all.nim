@@ -48,10 +48,12 @@ suite "test distributions":
     let
       c = constant(3.5)
       u = uniform(2, 6)
+      d = choose(@[1.0, 2.0, 3.0])
       t = choose(@[1, 2, 3]).map((x: int) => x.float)
 
     check(rng.mean(c) == 3.5)
     check(rng.mean(u) == 4.0)
+    check(rng.mean(d) == 2.0)
     check(rng.mean(t) ~ 2.0)
 
   test "computing the variance and standard deviation":

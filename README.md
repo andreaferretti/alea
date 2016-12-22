@@ -18,3 +18,4 @@ Install `nim` (e.g. with brew), then `nimble test`
 * monad composition
 * histograms
 * add more standard distributions
+* entropy etc.
