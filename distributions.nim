@@ -1,4 +1,5 @@
 import distributions/core, distributions/ops, distributions/rng,
-  distributions/sugar, distributions/gauss, distributions/bernoulli
+  distributions/sugar, distributions/gauss, distributions/bernoulli,
+  distributions/poisson
 
-export core, ops, rng, sugar, gauss, bernoulli
+export core, ops, rng, sugar, gauss, bernoulli, poisson

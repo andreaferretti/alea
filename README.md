@@ -18,5 +18,5 @@ Install `nim` (e.g. with brew), then `nimble test`
 * covariance
 * monad composition
 * histograms
-* add more standard distributions (Poisson, beta, gamma, geometric...)
+* add more standard distributions (beta, gamma, geometric...)
 * entropy etc.

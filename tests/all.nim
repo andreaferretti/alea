@@ -2,9 +2,15 @@ import future, unittest, math
 import random, random/urandom, random/mersenne
 import distributions
 
-template isBetween(x, a, b: float): bool = x >= a and x <= b
+proc isBetween(x, a, b: float): bool = x >= a and x <= b
 
-template `~`(x, a: float): bool = abs(x - a) < 0.1
+proc `~`(x, a: float): bool =
+  if a != 0:
+    abs((x - a) / a) < 0.1
+  else:
+    abs(x - a) < 0.1
+
+proc isInt(x: float): bool = x.int.float == x
 
 suite "test distributions":
   # We initialize the random number generator
@@ -97,13 +103,49 @@ suite "test distributions":
     check(rng.mean(h) ~ 0)
 
   test "bernoulli random variables":
-    let b = bernoulli(0.6)
+    let
+      b = bernoulli(0.6)
+      b1 = b.map((x:float) => x)
 
     check(b is RandomVar[float] == true)
-    check(@[0.0, 0.1].contains(rng.sample(b)))
+    check(@[0.0, 1.0].contains(rng.sample(b)))
     check(rng.mean(b) == 0.6)
     check(rng.variance(b) == 0.24)
     check(rng.stddev(b) == sqrt(0.24))
+    # We also check the empirical mean and variance
+    # to make sure we are sampling correctly
+    check(rng.mean(b1) ~ 0.6)
+    check(rng.variance(b1) ~ 0.24)
+
+  test "poisson random variables":
+    let
+      p = poisson(9)
+      p1 = p.map((x:float) => x)
+
+    check(p is RandomVar[float] == true)
+    check(rng.sample(p).isInt)
+    check(rng.mean(p) == 9)
+    check(rng.variance(p) == 9)
+    check(rng.stddev(p) == 3)
+    # We also check the empirical mean and variance
+    # to make sure we are sampling correctly
+    check(rng.mean(p1) ~ 9)
+    check(rng.stddev(p1) ~ 3)
+
+  test "poisson random variables with large lambda":
+    let
+      p = poisson(900)
+      p1 = p.map((x:float) => x)
+
+    check(p is RandomVar[float] == true)
+    check(rng.sample(p).isInt)
+    check(rng.mean(p) == 900)
+    check(rng.variance(p) == 900)
+    check(rng.stddev(p) == 30)
+    # We also check the empirical mean and variance
+    # to make sure we are sampling correctly
+    check(rng.mean(p1) ~ 900)
+    check(rng.stddev(p1) ~ 30)
 
   test "pairs of random variables":
     let
