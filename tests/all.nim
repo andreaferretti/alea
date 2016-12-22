@@ -96,6 +96,15 @@ suite "test distributions":
     check(rng.stddev(g) == 5)
     check(rng.mean(h) ~ 0)
 
+  test "bernoulli random variables":
+    let b = bernoulli(0.6)
+
+    check(b is RandomVar[float] == true)
+    check(@[0.0, 0.1].contains(rng.sample(b)))
+    check(rng.mean(b) == 0.6)
+    check(rng.variance(b) == 0.24)
+    check(rng.stddev(b) == sqrt(0.24))
+
   test "pairs of random variables":
     let
       d = choose(@[1, 2, 3])

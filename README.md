@@ -13,9 +13,10 @@ Install `nim` (e.g. with brew), then `nimble test`
 
 ## TODO
 
+* filtering and conditioning
 * higher moments
 * covariance
 * monad composition
 * histograms
-* add more standard distributions
+* add more standard distributions (Poisson, beta, gamma, geometric...)
 * entropy etc.
