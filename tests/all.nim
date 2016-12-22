@@ -46,9 +46,11 @@ suite "test distributions":
 
   test "computing the mean":
     let
+      c = constant(3.5)
       u = uniform(2, 6)
       t = choose(@[1, 2, 3]).map((x: int) => x.float)
 
+    check(rng.mean(c) == 3.5)
     check(rng.mean(u) == 4.0)
     check(rng.mean(t) ~ 2.0)
 

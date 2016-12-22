@@ -40,6 +40,8 @@ proc mean*(rng: var Random, r: RandomVar[float], samples = 100000): float =
 # For a more specific types we can have overloads:
 proc mean*(rng: var Random, r: Uniform, samples = 100000): float = (r.b + r.a) / 2.0
 
+proc mean*(rng: var Random, r: ConstantVar[float], samples = 100000): float = r.value
+
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
 proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
