@@ -31,9 +31,9 @@ converter constant*[A](a: A): ConstantVar[A] = ConstantVar[A](value: a)
 
 proc uniform*(a, b: float): Uniform = Uniform(a: a, b: b)
 
-proc choose*[A](xs: seq[A]): Discrete[A] =
+proc choose*[A](xs: openarray[A]): Discrete[A] =
   new result.values
-  result.values[] = xs
+  result.values[] = @xs
 
 proc closure*[A](f: proc(a: var Random): A): ClosureVar[A] =
   result.f = f

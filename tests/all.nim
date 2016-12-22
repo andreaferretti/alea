@@ -99,3 +99,11 @@ suite "test distributions":
       s = sqrt(u)
 
     check(rng.sample(s).isBetween(0, 3))
+
+  test "more complicated math operations":
+    let
+      a = uniform(0, 9)
+      b = choose([1, 2, 3, 4, 5]).map((x: int) => x.float)
+      s = ln(abs((sqrt(a) * b) - (a.floor / log10(b))))
+
+    discard rng.sample(s)

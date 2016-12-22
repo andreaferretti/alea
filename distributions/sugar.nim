@@ -15,10 +15,10 @@ template lift*(f, T: untyped) =
   proc f*(x: RandomVar[T]): auto =
     x.map(proc(t: T): auto = f(t))
 
+lift(abs, float)
 lift(sqrt, float)
 lift(cbrt, float)
 lift(log10, float)
-lift(log2, float)
 lift(ln, float)
 lift(exp, float)
 lift(arccos, float)
