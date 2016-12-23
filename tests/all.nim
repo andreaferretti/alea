@@ -69,6 +69,13 @@ suite "test distributions":
     check(@[1, 4, 9].contains(rng.sample(s)))
     check(rng.sample(t).isBetween(4, 25))
 
+  test "filtering random variables":
+    let
+      d = choose(@[1, 2, 3, 4, 5, 6])
+      s = d.filter((x: int) => x mod 2 == 0)
+
+    check(@[2, 4, 6].contains(rng.sample(s)))
+
   test "computing the mean":
     let
       c = constant(3.5)

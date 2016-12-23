@@ -93,6 +93,16 @@ proc clone*(r: RandomVar): auto =
 
   return closure(inner)
 
+# Filter a distribution with respect to a boolean predicate
+proc filter*[A](r: RandomVar, p: proc(a: A): bool): auto =
+  proc inner(rng: var Random): auto =
+    var value = rng.sample(r)
+    while not p(value):
+      value = rng.sample(r)
+    return value
+
+  return closure(inner)
+
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
 proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
