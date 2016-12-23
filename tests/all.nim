@@ -97,6 +97,11 @@ suite "test distributions":
     check(rng.stddev(d) == 2.0)
     check(rng.stddev(t) ~ sqrt(2.0 / 3.0))
 
+  test "computing the covariance":
+    let u = uniform(2, 6)
+
+    check(rng.covariance(u, u) ~ rng.variance(u))
+
   test "discretizing random variables":
     let
       u = uniform(2, 5)
