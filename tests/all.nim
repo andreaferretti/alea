@@ -12,6 +12,25 @@ proc `~`(x, a: float): bool =
 
 proc isInt(x: float): bool = x.int.float == x
 
+suite "test random number generators":
+  # We initialize the random number generator
+  var rng = wrap(initMersenneTwister(urandom(16)))
+
+  test "random number generation":
+    check(rng.random().isBetween(0, 1))
+
+  test "repeatable random numbers":
+    var repeated = rng.repeat(2)
+    let
+      a1 = repeated.random()
+      a2 = repeated.random()
+      a3 = repeated.random()
+      a4 = repeated.random()
+    check(a1 == a2)
+    check(a3 == a4)
+    check(a2 != a3)
+
+
 suite "test distributions":
   # We initialize the random number generator
   var rng = wrap(initMersenneTwister(urandom(16)))
