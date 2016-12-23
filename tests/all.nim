@@ -205,6 +205,18 @@ suite "test distributions":
 
     check(@[1, 4, 9].contains(rng.sample(s)))
 
+  test "conditioning random variables":
+    proc sq(x: int): int = x * x
+
+    lift(sq)
+
+    let
+      d = choose(@[1, 2, 3, 4, 5, 6])
+      s = sq(d)
+      t = d.where(s, (x: int) => x > 9)
+
+    check(@[4, 5, 6].contains(rng.sample(t)))
+
   test "lifts of math operations":
     let
       u = uniform(0, 9)

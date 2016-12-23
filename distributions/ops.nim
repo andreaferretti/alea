@@ -93,12 +93,30 @@ proc clone*(r: RandomVar): auto =
 
   return closure(inner)
 
-# Filter a distribution with respect to a boolean predicate
+# Filter a random variable with respect to a boolean predicate
 proc filter*[A](r: RandomVar, p: proc(a: A): bool): auto =
   proc inner(rng: var Random): auto =
     var value = rng.sample(r)
     while not p(value):
       value = rng.sample(r)
+    return value
+
+  return closure(inner)
+
+# Filter a  random variable with respect to a boolean predicate
+# on a different random variable. We repeat the trick of using
+#  repeated rng.
+# For some reason, here we need to be specific about `s`
+# This constraint should be removed
+proc where*[A](r: RandomVar, s: ClosureVar, p: proc(a: A): bool): auto =
+  proc inner(rng: var Random): auto =
+    var rep = rng.repeat(2)
+    var
+      value = rep.sample(r)
+      cond = rep.sample(s)
+    while not p(cond):
+      value = rep.sample(r)
+      cond = rep.sample(s)
     return value
 
   return closure(inner)
