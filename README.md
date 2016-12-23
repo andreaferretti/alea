@@ -13,7 +13,7 @@ Install `nim` (e.g. with brew), then `nimble test`
 
 ## TODO
 
-* filtering and conditioning
+* improved the DSL for conditioning
 * higher moments
 * monad composition
 * histograms
