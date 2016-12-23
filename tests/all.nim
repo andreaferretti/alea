@@ -102,6 +102,15 @@ suite "test distributions":
 
     check(rng.covariance(u, u) ~ rng.variance(u))
 
+  test "generating independent variables":
+    let
+      u1 = uniform(2, 6)
+      u2 = uniform(2, 6)
+      u3 = u2.clone()
+
+    check(rng.covariance(u1, u2) ~ rng.variance(u1))
+    check(rng.covariance(u1, u3) ~ 0)
+
   test "discretizing random variables":
     let
       u = uniform(2, 5)

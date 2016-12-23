@@ -71,11 +71,27 @@ proc variance*(rng: var Random, r: Discrete[float], samples = 100000): float {.i
 proc stddev*(rng: var Random, r: RandomVar[float], samples = 100000): float =
   sqrt(variance(rng, r, samples))
 
+# To compute the covariance, we cheat and use a fake random number generator
+# that will repeat its results twice. This allows us to get the point in the
+# probability space to evaluate both `r` and `s`
 proc covariance*(rng: var Random, r, s: RandomVar[float], samples = 100000): float =
   var rep = rng.repeat(2)
   let m1 = mean(rng, r, samples)
   let m2 = mean(rng, s, samples)
   (1 .. samples).foldl(a + (rep.sample(r) - m1) * (rep.sample(s) - m2), 0.0) / samples.float
+
+# The following generates a random variable with the same distribution
+# as the input one, but independent of it. The trick is just to neutralize
+# the effect of repeated random number generators, by discarding values
+# until they are different.
+proc clone*(r: RandomVar): auto =
+  proc inner(rng: var Random): auto =
+    let firstValue = rng.random()
+    while rng.random() == firstValue:
+      discard
+    return rng.sample(r)
+
+  return closure(inner)
 
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
