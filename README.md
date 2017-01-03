@@ -175,6 +175,7 @@ An example of their usage is:
 let x = uniform(2, 5) + choose(@[1.2, 3.3, 4.5])
 var rng = ...
 
+echo rng.sample(x)
 echo rng.mean(x)
 echo rng.variance(x)
 echo rng.stddev(x)
@@ -202,11 +203,35 @@ let d = f.discretize(samples = 20000)
 
 ## More distributions
 
-To be documented, see `tests/all.nim`
+A few common real random variables are implemented:
+
+```nim
+let
+  g = gaussian(mu = 0, sigma = 1)
+  p = poisson(3.5)
+  b = bernoulli(0.7)
+```
+
+Usually, the statistics for these notable random variables are known, so we have
+overloads, in such a way that, for instance, the mean of a Gaussian variable
+will always be exact.
 
 ## Defining custom distributions
 
-To be documented, see `tests/all.nim`
+To define your own random variables, you can take inspiration, say, from
+`bernoulli.nim`. The only mandatory operation for a type `T` to be an instance
+of `RandomVar[A]` is
+
+```nim
+proc sample(rng: var Random, t: T): A
+```
+
+If other statistics are known (such as mean, variance and so on), one can
+also define overloads such as
+
+```nim
+proc mean(rng: var Random, t: T, samples = 100000)
+```
 
 ## A complete example
 
@@ -233,8 +258,8 @@ echo rng.stddev(u)
 
 ## TODO
 
-* improved the DSL for conditioning
-* higher moments
+* improve the DSL for conditioning
+* higher moments and other statistics
 * monad composition
 * histograms
 * add more standard distributions (beta, gamma, geometric...)
