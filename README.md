@@ -88,13 +88,123 @@ let
 
 ## Operations on random variables
 
-To be documented, see `tests/all.nim`
+A few common operations on random variables are supported - in particular
+mapping and filtering:
+
+```nim
+import distributions, future
+
+let
+  a = uniform(3, 12)
+  b = a.map((x: float) => 3 - x)
+  c = a.filter((x: float) => x > 5)
+```
+
+Mapping, in particular, is a common operation, and there is a macro `lift`
+that takes a function `A => B` and declares a function of the same name of
+type `RandomVar[A] => ClosureVar[B]` that is obtained by mapping. It can be
+used with a type hint in case the function is overloaded, as in
+
+```nim
+import math
+
+proc sq(x: float): float = x * x
+
+lift(abs, float)
+lift(sq) # No ambiguity here
+
+let
+  a = uniform(3, 12)
+  b = sq(abs(a))
+```
+
+There is also a version of two arguments `map2`, that takes two random variables
+and a binary function. Generalization for more than two arguments can be done
+using the fact that random variables form
+[a monad](https://slawekk.wordpress.com/2009/05/31/probability-monad/)
+but the relevant functions are still to be implemented.
+
+Many mathematical functions, as well as the arithmetic operations, are already
+lifted, so the following is valid:
+
+```nim
+let
+  a = uniform(3, 12)
+  b = choose(@[1.0, 2.5, 3.7])
+  c = abs(a - b) * sqrt(a)
+```
 
 ## Conditioning random variables
 
-To be documented, see `tests/all.nim`
+Random variables can also be conditioned with respect to each other. For
+instance, if `a` and `b` are real random variables and we want to condition
+`a` to the occurrence that `b` is positive, we can do:
+
+```nim
+let c = a.where(b, (x: float) => x > 0)
+```
+
+where the last parameter to `where` is a predicate that should be satisfied
+by samples from `b`.
+
+How to make this work? Drawing from `b` will change the status of the random
+number generator, which in theory prevents us from sampling `a` at the same
+point.
+
+To avoid this issue, we use a fake random number generator that wraps another
+instance of `Random`, but repeats its result twice. That is, internally we
+use an auxiliary (fake) RNG defined like
+
+```nim
+var repeated = rng.repeat(2)
+```
+
+You can use the same trick whenever there is the need to draw more than a single
+sample from the same point of the probability space.
+
+## Statistics on random variables
+
+A few common statistics are implemented on `RandomVar[float]`, such as the mean,
+variance and so on. There is a generic implementation that will work for any
+random variable, but particular types of random variables can use more specialized
+methods.
+
+An example of their usage is:
+
+```nim
+let x = uniform(2, 5) + choose(@[1.2, 3.3, 4.5])
+var rng = ...
+
+echo rng.mean(x)
+echo rng.variance(x)
+echo rng.stddev(x)
+```
+
+The covariance is also implemented, again by using the trick of a repeating
+random number generator to draw from the two distributions at the same time.
+
+All there operations admit an optional parameter which is the number of samples
+to compute the statistics with more or less accuracy:
+
+```nim
+echo rng.mean(x, samples = 1000000)
+```
+
+Finally, complex random variables, that are represented by chains of closures,
+can be approximated by sampling enough times. There is a function `discretize`
+that will take any `RandomVar[A]` and produce an instance of `Discrete[A]` that
+will wrap a certain number of samples:
+
+```nim
+let f = ... # Some complex random variable
+let d = f.discretize(samples = 20000)
+```
 
 ## More distributions
+
+To be documented, see `tests/all.nim`
+
+## Defining custom distributions
 
 To be documented, see `tests/all.nim`
 
