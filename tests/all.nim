@@ -1,5 +1,5 @@
 import future, unittest, math
-import random, random/urandom, random/mersenne
+import random/urandom, random/mersenne
 import distributions
 
 proc isBetween(x, a, b: float): bool = x >= a and x <= b
