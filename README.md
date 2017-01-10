@@ -4,10 +4,6 @@
 
 Define and compose random variables.
 
-## How to test it
-
-Install `nim` (e.g. with brew), then `nimble test`
-
 ## Random numbers
 
 First, we need a way to generate random numbers. Here, a random number generator
