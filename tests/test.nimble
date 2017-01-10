@@ -17,4 +17,4 @@ task test, "run distribution tests":
   --debuginfo
   --path: ".."
   --run
-  setCommand "c", "all.nim"
+  setCommand "c", "test.nim"

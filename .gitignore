@@ -1,5 +1,5 @@
 nimcache
 target
 project/project
-tests/all
+tests/test
 *.ndb

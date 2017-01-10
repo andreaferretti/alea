@@ -1,4 +1,4 @@
-# Distributions
+# Alea
 
 [![nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)](https://github.com/yglukhov/nimble-tag)
 

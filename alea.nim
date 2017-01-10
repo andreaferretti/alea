@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import distributions/core, distributions/ops, distributions/rng,
-  distributions/sugar, distributions/gauss, distributions/bernoulli,
-  distributions/poisson
+import alea/core, alea/ops, alea/rng, alea/sugar, alea/gauss,
+  alea/bernoulli, alea/poisson
 
 export core, ops, rng, sugar, gauss, bernoulli, poisson
