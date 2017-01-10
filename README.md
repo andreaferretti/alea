@@ -20,7 +20,7 @@ One can obtain instances of `Random` by wrapping the RNG defined in
 
 ```nim
 import random/urandom, random/mersenne
-import distributions
+import alea
 
 var rng = wrap(initMersenneTwister(urandom(16)))
 ```
@@ -73,7 +73,7 @@ Here is an example showing how to costruct instances of these variables. Types
 are inferred, and are there just for explanatory purposes:
 
 ```nim
-import distributions
+import alea
 
 proc f(rng: var Random): float = 2 * rng.random()
 
@@ -90,7 +90,7 @@ A few common operations on random variables are supported - in particular
 mapping and filtering:
 
 ```nim
-import distributions, future
+import alea, future
 
 let
   a = uniform(3, 12)
@@ -238,7 +238,7 @@ Here is a small example that combines all of the above:
 ```nim
 import future
 import random/urandom, random/mersenne
-import distributions
+import alea
 
 var rng = wrap(initMersenneTwister(urandom(16)))
 let
