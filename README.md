@@ -1,5 +1,7 @@
 # Distributions
 
+[![nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)](https://github.com/yglukhov/nimble-tag)
+
 Define and compose random variables.
 
 ## How to test it
