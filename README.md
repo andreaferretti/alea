@@ -62,7 +62,7 @@ A few core random variables are defined:
 * `ConstantVar[A]` is a just a trivial random variable that always samples
   the same value
 * `Uniform` is a uniform variable over a real interval
-* `Discrete[A]` is a discrete random variable that can take a finite number of
+* `Choice[A]` is a discrete random variable that can take a finite number of
   values with equal probability
 * `ClosureVar[A]` is a wrapper over a `proc(rng: var Random): A`
 
@@ -80,7 +80,7 @@ proc f(rng: var Random): float = 2 * rng.random()
 let
   c: ConstantVar[string] = constant("hello")
   u: Uniform = uniform(2, 14)
-  d: Discrete[int] = choose(@[1, 2, 3, 4, 5])
+  d: Choice[int] = choice(@[1, 2, 3, 4, 5])
   x: ClosureVar[float] = closure(f)
 ```
 
@@ -128,7 +128,7 @@ lifted, so the following is valid:
 ```nim
 let
   a = uniform(3, 12)
-  b = choose(@[1.0, 2.5, 3.7])
+  b = choice(@[1.0, 2.5, 3.7])
   c = abs(a - b) * sqrt(a)
 ```
 
@@ -170,7 +170,7 @@ methods.
 An example of their usage is:
 
 ```nim
-let x = uniform(2, 5) + choose(@[1.2, 3.3, 4.5])
+let x = uniform(2, 5) + choice(@[1.2, 3.3, 4.5])
 var rng = ...
 
 echo rng.sample(x)
@@ -191,7 +191,7 @@ echo rng.mean(x, samples = 1000000)
 
 Finally, complex random variables, that are represented by chains of closures,
 can be approximated by sampling enough times. There is a function `discretize`
-that will take any `RandomVar[A]` and produce an instance of `Discrete[A]` that
+that will take any `RandomVar[A]` and produce an instance of `Choice[A]` that
 will wrap a certain number of samples:
 
 ```nim
@@ -243,7 +243,7 @@ import alea
 var rng = wrap(initMersenneTwister(urandom(16)))
 let
   a = uniform(0, 9)
-  b = choose([1, 2, 3, 4, 5]).map((x: int) => x.float)
+  b = choice([1, 2, 3, 4, 5]).map((x: int) => x.float)
   c = poisson(13)
   d = gaussian(mu = 3, sigma = 5).filter((x: float) => x > 3)
   s = ln(abs((sqrt(a) * b) - (a.floor / log10(c)))) + d

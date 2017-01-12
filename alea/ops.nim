@@ -58,7 +58,7 @@ proc mean*(rng: var Random, r: Uniform, samples = 100000): float {.inline.} =
 proc mean*(rng: var Random, r: ConstantVar[float], samples = 100000): float {.inline.} =
   r.value
 
-proc mean*(rng: var Random, r: Discrete[float], samples = 100000): float {.inline.} =
+proc mean*(rng: var Random, r: Choice[float], samples = 100000): float {.inline.} =
   if r.values[].len < samples:
     r.values[].foldl(a + b, 0.0) / r.values[].len.float
   else:
@@ -75,7 +75,7 @@ proc variance*(rng: var Random, r: Uniform, samples = 100000): float =
 
 proc variance*(rng: var Random, r: ConstantVar[float], samples = 100000): float = 0.0
 
-proc variance*(rng: var Random, r: Discrete[float], samples = 100000): float {.inline.} =
+proc variance*(rng: var Random, r: Choice[float], samples = 100000): float {.inline.} =
   let m = mean(rng, r, samples)
   if r.values[].len < samples:
     r.values[].foldl(a + sq(b - m), 0.0) / r.values[].len.float
@@ -141,7 +141,7 @@ proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
   var values = newSeqOfCap[type(rng.sample(r))](samples)
   for _ in 1 .. samples:
     values.add(rng.sample(r))
-  return choose(values)
+  return choice(values)
 
 proc `+`*(x, y: RandomVar[int]): auto =
   map2(x, y, (a: int, b: int) =>  a + b)

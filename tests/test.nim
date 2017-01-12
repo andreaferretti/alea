@@ -53,7 +53,7 @@ suite "test distributions":
     let
       c = constant(3)
       u = uniform(2, 18)
-      d = choose(@[1, 2, 3])
+      d = choice(@[1, 2, 3])
       f = closure((r: var Random) => 3.0 * r.random())
 
     check(c is RandomVar[int] == true)
@@ -65,7 +65,7 @@ suite "test distributions":
     let
       c = constant(3)
       u = uniform(2, 18)
-      d = choose(@[1, 2, 3])
+      d = choice(@[1, 2, 3])
       f = closure((r: var Random) => 3.0 * r.random())
 
     check(rng.sample(c) == 3)
@@ -75,7 +75,7 @@ suite "test distributions":
 
   test "mapping random variables":
     let
-      d = choose(@[1, 2, 3])
+      d = choice(@[1, 2, 3])
       u = uniform(2, 5)
       s = d.map((x: int) => x * x)
       t = u.map((x: float) => x * x)
@@ -85,7 +85,7 @@ suite "test distributions":
 
   test "filtering random variables":
     let
-      d = choose(@[1, 2, 3, 4, 5, 6])
+      d = choice(@[1, 2, 3, 4, 5, 6])
       s = d.filter((x: int) => x mod 2 == 0)
 
     check(@[2, 4, 6].contains(rng.sample(s)))
@@ -94,8 +94,8 @@ suite "test distributions":
     let
       c = constant(3.5)
       u = uniform(2, 6)
-      d = choose(@[1.0, 2.0, 3.0])
-      t = choose(@[1, 2, 3]).map((x: int) => x.float)
+      d = choice(@[1.0, 2.0, 3.0])
+      t = choice(@[1, 2, 3]).map((x: int) => x.float)
 
     check(rng.mean(c) == 3.5)
     check(rng.mean(u) == 4.0)
@@ -106,8 +106,8 @@ suite "test distributions":
     let
       c = constant(3.5)
       u = uniform(2, 8)
-      d = choose(@[2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
-      t = choose(@[1, 2, 3]).map((x: int) => x.float)
+      d = choice(@[2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
+      t = choice(@[1, 2, 3]).map((x: int) => x.float)
 
     check(rng.variance(c) == 0.0)
     check(rng.variance(u) == 3.0)
@@ -203,7 +203,7 @@ suite "test distributions":
 
   test "pairs of random variables":
     let
-      d = choose(@[1, 2, 3])
+      d = choice(@[1, 2, 3])
       c = constant(5)
       s = c && d
 
@@ -214,7 +214,7 @@ suite "test distributions":
 
     lift(sq)
     let
-      d = choose(@[1, 2, 3])
+      d = choice(@[1, 2, 3])
       s = sq(d)
 
     check(@[1, 4, 9].contains(rng.sample(s)))
@@ -225,7 +225,7 @@ suite "test distributions":
     lift(sq)
 
     let
-      d = choose(@[1, 2, 3, 4, 5, 6])
+      d = choice(@[1, 2, 3, 4, 5, 6])
       s = sq(d)
       t = d.where(s, (x: int) => x > 9)
 
@@ -241,7 +241,7 @@ suite "test distributions":
   test "more complicated math operations":
     let
       a = uniform(0, 9)
-      b = choose([1, 2, 3, 4, 5]).map((x: int) => x.float)
+      b = choice([1, 2, 3, 4, 5]).map((x: int) => x.float)
       p = poisson(13)
       s = ln(abs((sqrt(a) * b) - (a.floor / log10(p))))
 
