@@ -22,7 +22,7 @@ proc discrete*[A](xs: seq[(A, float)]): Discrete[A] =
   new result.values
   result.values[] = @xs
 
-# To make Gaussian an instance of RandomVar[float],
+# To make Discrete[A] an instance of RandomVar[A],
 # just define `sample`
 proc sample*[A](rng: var Random, d: Discrete[A]): A =
   let x = rng.random()
