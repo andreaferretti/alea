@@ -146,6 +146,16 @@ suite "test distributions":
 
     check(rng.mean(s) ~ 16)
 
+  test "discrete random variables":
+    let
+      d1 = discrete(@{ 1: 0.3, 2: 0.4, 3: 0.3 })
+      d2 = discrete(@{ 1.0: 0.3, 2.0: 0.4, 3.0: 0.3 })
+      c = d1.map((x: int) => x.float)
+
+    check(d1 is RandomVar[int] == true)
+    check(rng.mean(d2) == 2)
+    check(rng.mean(c) ~ 2)
+
   test "gaussian random variables":
     let
       g = gaussian(3, 5)

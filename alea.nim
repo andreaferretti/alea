@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import alea/core, alea/ops, alea/rng, alea/sugar, alea/gauss,
+import alea/core, alea/ops, alea/rng, alea/sugar, alea/discrete, alea/gauss,
   alea/bernoulli, alea/poisson
 
-export core, ops, rng, sugar, gauss, bernoulli, poisson
+export core, ops, rng, sugar, discrete, gauss, bernoulli, poisson

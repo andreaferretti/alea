@@ -15,6 +15,12 @@
 import sequtils, future, math
 import ./core, ./rng
 
+template take*(rng: var Random, x: RandomVar, n: int): auto =
+  var s = newSeq[type(rng.sample(x))](n)
+  for i in 0 .. < n:
+    s[i] = rng.sample(x)
+  s
+
 # How to lift a function on values to a function on random variables
 proc map*[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
   proc inner(rng: var Random): B =
