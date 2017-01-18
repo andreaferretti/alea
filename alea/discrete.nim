@@ -37,3 +37,11 @@ proc sample*[A](rng: var Random, d: Discrete[A]): A =
 # when they are known in advance
 proc mean*(rng: var Random, d: Discrete[float], samples = 100000): float =
   d.values[].foldl(a + b.value * b.p, 0.0)
+
+template sq(x: float): float = x * x
+
+proc variance*(rng: var Random, d: Discrete[float], samples = 100000): float =
+  let m = rng.mean(d, samples)
+  for t in d.values[]:
+    let (a, p) = t
+    result += sq(a - m) * p

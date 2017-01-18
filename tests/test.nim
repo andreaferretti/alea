@@ -155,6 +155,7 @@ suite "test distributions":
     check(d1 is RandomVar[int] == true)
     check(rng.mean(d2) == 2)
     check(rng.mean(c) ~ 2)
+    check(rng.variance(d2) == 0.6)
 
   test "gaussian random variables":
     let
