@@ -257,3 +257,13 @@ suite "test distributions":
       s = ln(abs((sqrt(a) * b) - (a.floor / log10(p))))
 
     discard rng.sample(s)
+
+  test "computing entropy":
+    let
+      c = choice([1, 2, 3, 4, 5])
+      c1 = choice([1, 2, 3])
+      d = discrete(@{ 1: 0.3, 2: 0.4, 3: 0.3 })
+
+    check(entropy(c) ~ ln(5.0))
+    check(entropy(d) > 0)
+    check(entropy(d) < entropy(c1))     

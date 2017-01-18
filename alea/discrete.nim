@@ -22,6 +22,11 @@ proc discrete*[A](xs: seq[(A, float)]): Discrete[A] =
   new result.values
   result.values[] = @xs
 
+converter discrete*[A](x: Choice[A]): Discrete[A] =
+  let p = 1.0 / x.values[].len.float
+  new result.values
+  result.values[] = sequtils.map(x.values[], proc(a: A): auto = (a, p))
+
 # To make Discrete[A] an instance of RandomVar[A],
 # just define `sample`
 proc sample*[A](rng: var Random, d: Discrete[A]): A =
@@ -45,3 +50,11 @@ proc variance*(rng: var Random, d: Discrete[float], samples = 100000): float =
   for t in d.values[]:
     let (a, p) = t
     result += sq(a - m) * p
+
+# Information theoretic functions for discrete variables
+
+proc entropy*[A](d: Discrete[A]): float =
+  for t in d.values[]:
+    let (_, p) = t
+    if p != 0:
+      result -= p * ln(p)
