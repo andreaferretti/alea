@@ -17,4 +17,5 @@ task test, "run distribution tests":
   --debuginfo
   --path: ".."
   --run
+  --define:reportConceptFailures
   setCommand "c", "test.nim"

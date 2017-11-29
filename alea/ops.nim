@@ -22,7 +22,7 @@ template take*(rng: var Random, x: RandomVar, n: int): auto =
   s
 
 # How to lift a function on values to a function on random variables
-proc map*[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
+proc map*[A, B](x: RandomVar[A], f: proc(a: A): B): ClosureVar[B] =
   proc inner(rng: var Random): B =
     f(rng.sample(x))
 
@@ -36,8 +36,8 @@ proc map*[A, B](x: RandomVar, f: proc(a: A): B): ClosureVar[B] =
 #   result.f = inner
 
 # How to lift a function on two values to a function on random variables
-proc map2*[A, B, C](x, y: RandomVar, f: proc(a: A, b: B): C): ClosureVar[C] =
-  proc inner(rng: var Random): B =
+proc map2*[A, B, C](x: RandomVar[A], y: RandomVar[B], f: proc(a: A, b: B): C): ClosureVar[C] =
+  proc inner(rng: var Random): C =
     f(rng.sample(x), rng.sample(y))
 
   result.f = inner
@@ -104,7 +104,7 @@ proc covariance*(rng: var Random, r, s: RandomVar[float], samples = 100000): flo
 # as the input one, but independent of it. The trick is just to neutralize
 # the effect of repeated random number generators, by discarding values
 # until they are different.
-proc clone*(r: RandomVar): auto =
+proc clone*[A](r: RandomVar[A]): auto =
   proc inner(rng: var Random): auto =
     let firstValue = rng.random()
     while rng.random() == firstValue:
@@ -114,7 +114,7 @@ proc clone*(r: RandomVar): auto =
   return closure(inner)
 
 # Filter a random variable with respect to a boolean predicate
-proc filter*[A](r: RandomVar, p: proc(a: A): bool): auto =
+proc filter*[A](r: RandomVar[A], p: proc(a: A): bool): auto =
   proc inner(rng: var Random): auto =
     var value = rng.sample(r)
     while not p(value):
@@ -143,7 +143,7 @@ proc where*[A](r: RandomVar, s: ClosureVar, p: proc(a: A): bool): auto =
 
 # Every random variable can be converted into a discrete one
 # by sampling a certain number of times
-proc discretize*(rng: var Random, r: RandomVar, samples = 10000): auto =
+proc discretize*[A](rng: var Random, r: RandomVar[A], samples = 10000): auto =
   var values = newSeqOfCap[type(rng.sample(r))](samples)
   for _ in 1 .. samples:
     values.add(rng.sample(r))

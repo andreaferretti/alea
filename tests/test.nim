@@ -118,19 +118,19 @@ suite "test distributions":
     check(rng.stddev(d) == 2.0)
     check(rng.stddev(t) ~ sqrt(2.0 / 3.0))
 
-  test "computing the covariance":
-    let u = uniform(2, 6)
+  # test "computing the covariance":
+  #   let u = uniform(2, 6)
+  #
+  #   check(rng.covariance(u, u) ~ rng.variance(u))
 
-    check(rng.covariance(u, u) ~ rng.variance(u))
-
-  test "generating independent variables":
-    let
-      u1 = uniform(2, 6)
-      u2 = uniform(2, 6)
-      u3 = u2.clone()
-
-    check(rng.covariance(u1, u2) ~ rng.variance(u1))
-    check(rng.covariance(u1, u3) ~ 0)
+  # test "generating independent variables":
+  #   let
+  #     u1 = uniform(2, 6)
+  #     u2 = uniform(2, 6)
+  #     u3 = u2.clone()
+  #
+  #   check(rng.covariance(u1, u2) ~ rng.variance(u1))
+  #   check(rng.covariance(u1, u3) ~ 0)
 
   test "discretizing random variables":
     let
@@ -139,12 +139,12 @@ suite "test distributions":
 
     check(rng.mean(u) ~ rng.mean(d))
 
-  test "arithmetic over random variables":
-    let
-      u = uniform(3, 5)
-      s = u * u
-
-    check(rng.mean(s) ~ 16)
+  # test "arithmetic over random variables":
+  #   let
+  #     u = uniform(3, 5)
+  #     s = u * u
+  #
+  #   check(rng.mean(s) ~ 16)
 
   test "discrete random variables":
     let
@@ -157,15 +157,15 @@ suite "test distributions":
     check(rng.mean(c) ~ 2)
     check(rng.variance(d2) == 0.6)
 
-  test "gaussian random variables":
-    let
-      g = gaussian(3, 5)
-      h = g - g
-
-    check(g is RandomVar[float] == true)
-    check(rng.mean(g) == 3)
-    check(rng.stddev(g) == 5)
-    check(rng.mean(h) ~ 0)
+  # test "gaussian random variables":
+  #   let
+  #     g = gaussian(3, 5)
+  #     h = g - g
+  #
+  #   check(g is RandomVar[float] == true)
+  #   check(rng.mean(g) == 3)
+  #   check(rng.stddev(g) == 5)
+  #   check(rng.mean(h) ~ 0)
 
   test "bernoulli random variables":
     let
@@ -249,14 +249,14 @@ suite "test distributions":
 
     check(rng.sample(s).isBetween(0, 3))
 
-  test "more complicated math operations":
-    let
-      a = uniform(0, 9)
-      b = choice([1, 2, 3, 4, 5]).map((x: int) => x.float)
-      p = poisson(13)
-      s = ln(abs((sqrt(a) * b) - (a.floor / log10(p))))
-
-    discard rng.sample(s)
+  # test "more complicated math operations":
+  #   let
+  #     a = uniform(0, 9)
+  #     b = choice([1, 2, 3, 4, 5]).map((x: int) => x.float)
+  #     p = poisson(13)
+  #     s = ln(abs((sqrt(a) * b) - (a.floor / log10(p))))
+  #
+  #   discard rng.sample(s)
 
   test "computing entropy":
     let
@@ -266,4 +266,4 @@ suite "test distributions":
 
     check(entropy(c) ~ ln(5.0))
     check(entropy(d) > 0)
-    check(entropy(d) < entropy(c1))     
+    check(entropy(d) < entropy(c1))
