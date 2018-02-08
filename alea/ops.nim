@@ -94,7 +94,7 @@ proc stddev*(rng: var Random, r: RandomVar[float], samples = 100000): float =
 # To compute the covariance, we cheat and use a fake random number generator
 # that will repeat its results twice. This allows us to get the point in the
 # probability space to evaluate both `r` and `s`
-proc covariance*(rng: var Random, r, s: RandomVar[float], samples = 100000): float =
+proc covariance*[A](rng: var Random, r, s: distinct RandomVar[A], samples = 100000): float =
   var rep = rng.repeat(2)
   let m1 = mean(rng, r, samples)
   let m2 = mean(rng, s, samples)
@@ -149,23 +149,14 @@ proc discretize*[A](rng: var Random, r: RandomVar[A], samples = 10000): auto =
     values.add(rng.sample(r))
   return choice(values)
 
-proc `+`*(x, y: RandomVar[int]): auto =
-  map2(x, y, (a: int, b: int) =>  a + b)
+proc `+`*[A: SomeNumber](x, y: RandomVar[A]): auto =
+  map2(x, y, (a: A, b: A) =>  a + b)
 
-proc `+`*(x, y: RandomVar[float]): auto =
-  map2(x, y, (a: float, b: float) =>  a + b)
+proc `-`*[A: SomeNumber](x, y: RandomVar[A]): auto =
+  map2(x, y, (a: A, b: A) =>  a - b)
 
-proc `-`*(x, y: RandomVar[int]): auto =
-  map2(x, y, (a: int, b: int) =>  a - b)
+proc `*`*[A: SomeNumber](x, y: RandomVar[A]): auto =
+  map2(x, y, (a: A, b: A) =>  a * b)
 
-proc `-`*(x, y: RandomVar[float]): auto =
-  map2(x, y, (a: float, b: float) =>  a - b)
-
-proc `*`*(x, y: RandomVar[int]): auto =
-  map2(x, y, (a: int, b: int) =>  a * b)
-
-proc `*`*(x, y: RandomVar[float]): auto =
-  map2(x, y, (a: float, b: float) =>  a * b)
-
-proc `/`*(x, y: RandomVar[float]): auto =
-  map2(x, y, (a: float, b: float) =>  a / b)
+proc `/`*[A: SomeReal](x, y: RandomVar[A]): auto =
+  map2(x, y, (a: A, b: A) =>  a / b)
