@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import future, unittest, math
+import sugar, unittest, math
 import random/urandom, random/mersenne
 import alea
 
