@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.3"
+version       = "0.1.4"
 author        = "Andrea Ferretti"
 description   = "A library to work with random variables"
 license       = "Apache2"

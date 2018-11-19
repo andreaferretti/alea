@@ -158,5 +158,5 @@ proc `-`*[A: SomeNumber](x, y: RandomVar[A]): auto =
 proc `*`*[A: SomeNumber](x, y: RandomVar[A]): auto =
   map2(x, y, (a: A, b: A) =>  a * b)
 
-proc `/`*[A: SomeReal](x, y: RandomVar[A]): auto =
+proc `/`*[A: SomeFloat](x, y: RandomVar[A]): auto =
   map2(x, y, (a: A, b: A) =>  a / b)
