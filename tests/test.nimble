@@ -7,7 +7,7 @@ license       = "Apache2"
 
 # Dependencies
 
-requires "nim >= 0.18.0", "random >= 0.5.4", "nimfp >= 0.3.4"
+requires "nim >= 0.18.0", "random >= 0.5.6", "nimfp >= 0.3.4"
 
 task test, "run distribution tests":
   --hints: off

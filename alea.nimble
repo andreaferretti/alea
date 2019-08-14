@@ -8,7 +8,7 @@ skipDirs = @["tests"]
 
 # Dependencies
 
-requires "nim >= 0.18.0", "random >= 0.5.4"
+requires "nim >= 0.18.0", "random >= 0.5.6"
 
 task test, "run alea tests":
   withDir "tests":
