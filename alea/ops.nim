@@ -17,7 +17,7 @@ import ./core, ./rng
 
 template take*(rng: var Random, x: RandomVar, n: int): auto =
   var s = newSeq[type(rng.sample(x))](n)
-  for i in 0 .. < n:
+  for i in 0 ..< n:
     s[i] = rng.sample(x)
   s
 
