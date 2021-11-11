@@ -26,7 +26,7 @@ macro lift*[A, B](f: proc(a: A): B): auto =
 
 # Use an explicit type hint for overloaded functions
 template lift*(f, T: untyped) =
-  proc f*(x: RandomVar[T]): auto =
+  func f*(x: RandomVar[T]): auto =
     x.map(proc(t: T): auto = f(t))
 
 lift(abs, float)
