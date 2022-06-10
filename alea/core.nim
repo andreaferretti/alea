@@ -41,7 +41,7 @@ proc sample*[A](rng: var Random, d: Choice[A]): A =
 proc sample*[A](rng: var Random, c: ClosureVar[A]): A = c.f(rng)
 
 # A few constructors
-converter constant*[A](a: A): ConstantVar[A] = ConstantVar[A](value: a)
+converter constant*[A: not void](a: A): ConstantVar[A] = ConstantVar[A](value: a)
 
 proc uniform*(a, b: float): Uniform = Uniform(a: a, b: b)
 
