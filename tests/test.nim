@@ -20,9 +20,9 @@ proc isBetween(x, a, b: float): bool = x >= a and x <= b
 
 proc `~`(x, a: float): bool =
   if a != 0:
-    abs((x - a) / a) < 0.1
+    system.abs((x - a) / a) < 0.1
   else:
-    abs(x - a) < 0.1
+    system.abs(x - a) < 0.1
 
 proc isInt(x: float): bool = x.int.float == x
 
