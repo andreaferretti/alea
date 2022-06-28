@@ -22,7 +22,7 @@ template take*(rng: var Random, x: RandomVar, n: int): auto =
   s
 
 # How to lift a function on values to a function on random variables
-proc map*[A, B](x: RandomVar[A], f: proc(a: A): B): ClosureVar[B] =
+proc map*[A, B](x: RandomVar[A], f: ClosureArg[A, B]): ClosureVar[B] =
   proc inner(rng: var Random): B =
     f(rng.sample(x))
 
@@ -36,7 +36,7 @@ proc map*[A, B](x: RandomVar[A], f: proc(a: A): B): ClosureVar[B] =
 #   result.f = inner
 
 # How to lift a function on two values to a function on random variables
-proc map2*[A, B, C](x: RandomVar[A], y: RandomVar[B], f: proc(a: A, b: B): C): ClosureVar[C] =
+proc map2*[A, B, C](x: RandomVar[A], y: RandomVar[B], f: Closure2Arg[A, B, C]): ClosureVar[C] =
   proc inner(rng: var Random): C =
     f(rng.sample(x), rng.sample(y))
 
@@ -114,7 +114,7 @@ proc clone*[A](r: RandomVar[A]): auto =
   return closure(inner)
 
 # Filter a random variable with respect to a boolean predicate
-proc filter*[A](r: RandomVar[A], p: proc(a: A): bool): auto =
+proc filter*[A](r: RandomVar[A], p: proc(a: A): bool {.gcsafe.}): auto =
   proc inner(rng: var Random): auto =
     var value = rng.sample(r)
     while not p(value):
@@ -128,7 +128,7 @@ proc filter*[A](r: RandomVar[A], p: proc(a: A): bool): auto =
 #  repeated rng.
 # For some reason, here we need to be specific about `s`
 # This constraint should be removed
-proc where*[A](r: RandomVar, s: ClosureVar, p: proc(a: A): bool): auto =
+proc where*[A](r: RandomVar, s: ClosureVar, p: ClosureBool[A]): auto =
   proc inner(rng: var Random): auto =
     var rep = rng.repeat(2)
     var

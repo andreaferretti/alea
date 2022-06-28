@@ -13,9 +13,21 @@
 # limitations under the License.
 
 type
+  # A closure returning a random number
+  RandomGen* = proc(): float {.gcsafe.}
+  # A closure using an RNG to return a random number
+  RandomArgGen*[A] = proc(rng: var Random): A {.gcsafe.}
+
+  # A closure taking one argument and returning a number
+  ClosureArg*[A, B] = proc(a: A): B {.gcsafe.}
+  # A closure taking two arguments and returning a number
+  Closure2Arg*[A, B, C] = proc(a: A, b: B): C {.gcsafe.}
+  # A closure taking a number and returning a bool
+  ClosureBool*[A] = proc(a: A): bool {.gcsafe.}
+
   # A random number generator
   Random* = object
-    random*: proc(): float
+    random*: RandomGen
   # A generic typeclass for a random var
   RandomVar*[A] = concept x
     var rng: Random
@@ -28,7 +40,7 @@ type
   Choice*[A] = object
     values*: ref seq[A]
   ClosureVar*[A] = object
-    f*: proc(rng: var Random): A
+    f*: RandomArgGen[A]
 
 # How to sample from various concrete instances
 proc sample*[A](rng: var Random, c: ConstantVar[A]): A = c.value
@@ -49,5 +61,5 @@ proc choice*[A](xs: openarray[A]): Choice[A] =
   new result.values
   result.values[] = @xs
 
-proc closure*[A](f: proc(a: var Random): A): ClosureVar[A] =
+proc closure*[A](f: RandomArgGen[A]): ClosureVar[A] =
   result.f = f
