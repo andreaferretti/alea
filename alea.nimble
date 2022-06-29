@@ -2,7 +2,7 @@ import os
 
 # Package
 
-version       = "0.1.5"
+version       = "0.1.6"
 author        = "Andrea Ferretti"
 description   = "A library to work with random variables"
 license       = "Apache2"
