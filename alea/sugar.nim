@@ -25,7 +25,7 @@ macro lift*[A, B](f: proc(a: A): B): auto =
   result = getAst(inner(id))
 
 # Use an explicit type hint for overloaded functions
-template lift*(f, T: untyped) =
+template lift*(f: typed, T: untyped) =
   func f*(x: RandomVar[T]): auto =
     x.map(proc(t: T): auto = f(t))
 
